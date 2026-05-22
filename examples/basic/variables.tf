@@ -1,11 +1,5 @@
 variable "name" {
-  description = "The name of the resource."
+  description = "The name of the GitHub repository."
   type        = string
   default     = "example-basic"
-}
-
-variable "location" {
-  description = "The geographic location for the resource."
-  type        = string
-  default     = "unitedstates"
 }
