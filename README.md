@@ -284,11 +284,11 @@ Default: `"active"`
 
 ### <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message)
 
-Description: Default message for merge commits. Valid values: `PR_BODY`, `PR_TITLE`, `BLANK`. Default: `PR_BODY`. Applicable only when `allow_merge_commit = true`.
+Description: Default message for merge commits. Valid values: `PR_BODY`, `PR_TITLE`, `BLANK`. Default: `PR_TITLE`. Note: GitHub API enforces valid combinations — `MERGE_MESSAGE` title only accepts `PR_TITLE` message; `PR_TITLE` title accepts `PR_BODY` or `BLANK` message. Applicable only when `allow_merge_commit = true`.
 
 Type: `string`
 
-Default: `"PR_BODY"`
+Default: `"PR_TITLE"`
 
 ### <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title)
 

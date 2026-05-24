@@ -4,8 +4,12 @@
 #   GITHUB_TOKEN — Personal Access Token or GitHub App installation token with `repo` scope
 #   GH_OWNER — (optional) GitHub organization or user to scope repository creation to
 #
+# Note: delete_repo scope is NOT required — repositories are archived on cleanup (archive_on_destroy = true).
+# Cleanup issues PATCH /repos/{owner}/{repo} with {archived: true} instead of DELETE, which only requires repo scope.
+#
 # These tests create real GitHub repositories.
-# Repositories are automatically destroyed after test completion.
+# Repositories are archived (not deleted) automatically after test completion.
+# Note: archived tftest-* repos may need periodic manual cleanup.
 # Note: if a test run fails mid-execution, orphaned repositories may need manual cleanup.
 
 run "creates_repository_with_required_inputs" {
@@ -13,7 +17,7 @@ run "creates_repository_with_required_inputs" {
 
   variables {
     name               = "tftest-basic-${formatdate("YYYYMMDDhhmmss", timestamp())}"
-    archive_on_destroy = false
+    archive_on_destroy = true
   }
 
   assert {
@@ -32,7 +36,7 @@ run "creates_repository_with_extended_config" {
     has_issues             = true
     topics                 = ["terraform", "testing"]
     delete_branch_on_merge = true
-    archive_on_destroy     = false
+    archive_on_destroy     = true
   }
 
   assert {
