@@ -29,11 +29,9 @@ provider "github" {
 ```
 
 Supported authentication methods:
-- **Personal Access Token (PAT)**: set `GITHUB_TOKEN`
-- **GitHub App**: configure `app_auth` block in the provider
-- **GitHub Actions**: `GITHUB_TOKEN` is automatically available in Actions workflows
-
-The token requires `repo` scope (or `public_repo` for public repositories only).
+- **Personal Access Token (PAT)**: set `GITHUB_TOKEN` with `repo` scope (or `public_repo` for public repositories only)
+- **GitHub App**: configure `app_auth` block in the provider; the app must have `Repository: Administration (write)` permission
+- **GitHub Actions**: the built-in `GITHUB_TOKEN` is **not sufficient** for repository creation/management — use a PAT or GitHub App installation token stored as a separate Actions secret (see CI configuration for reference)
 
 ## Usage Notes
 

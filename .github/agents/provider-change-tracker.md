@@ -13,15 +13,14 @@ You never modify `.tf` files. You analyse, assess, and hand off.
 
 Build a complete picture of every provider dependency in the module.
 
-- Read `terraform.tf` (and any `terraform.tf` in `modules/*/`) to list **all** providers and their version constraints — not just `microsoft/power-platform`
+- Read `terraform.tf` (and any `terraform.tf` in `modules/*/`) to list **all** providers and their version constraints — not just `integrations/github`
 - Recursively scan all `.tf` files in the root, `modules/`, and `examples/` for `resource` and `data` blocks
 - Build a deduplicated inventory grouped by provider:
 
   ```
-  microsoft/power-platform (~> 4.0)
-    resource: powerplatform_environment          main.tf:12
-    resource: powerplatform_managed_environment  main.tf:34
-    data:     powerplatform_connectors           main.tf:58
+  integrations/github (~> 6.12)
+    resource: github_repository          main.tf:12
+    data:     github_repository          main.tf:34
   ```
 
 - Record file path and line number for every declaration — these are needed for the assessment in Phase 3
@@ -39,15 +38,15 @@ For each resource and data source found in Phase 1, retrieve its **Terraform Reg
   - **New optional attributes** that could improve the module (security hardening, governance, new capabilities)
   - **Removed attributes** that the module currently sets
   - **Type changes** on attributes the module uses (e.g., `string` → `list(string)`)
-- For the `microsoft/power-platform` provider, the primary registry URL is:
-  `https://registry.terraform.io/providers/microsoft/power-platform/latest/docs`
+- For the `integrations/github` provider, the primary registry URL is:
+  `https://registry.terraform.io/providers/integrations/github/latest/docs`
 - For any other provider in the inventory, follow the same process using its own registry docs
 
 ### Supplementary: Provider Changelog
 
 If the provider's GitHub repository has a `CHANGELOG.md`, use it as an additional source:
 
-- For `microsoft/power-platform`: `https://github.com/microsoft/terraform-provider-power-platform/blob/main/CHANGELOG.md` (Changie format with emoji categories: 💥 Breaking, ⚰️ Deprecated, ✨ Added, 💫 Changed, 🪲 Fixed, 📚 Documentation)
+- For `integrations/github`: `https://github.com/integrations/terraform-provider-github/blob/main/CHANGELOG.md`
 - Identify entries between the module's current version pin and the latest release (or a user-specified target version)
 - Do not skip intermediate versions — a deprecation in v3.8 matters even when upgrading to v4.1
 - Cross-reference changelog entries with findings from the documentation check to build a complete picture
@@ -123,7 +122,7 @@ If no meaningful changes are found, report: **"No impact — module is up to dat
 
 ### Always Do
 
-- Scan **all** providers declared in the module, not just `microsoft/power-platform`
+- Scan **all** providers declared in the module, not just `integrations/github`
 - Check the **documentation page** for every resource and data source — do not rely on the changelog alone
 - Include the changelog as a supplementary source when available
 - Cross-reference findings against the module's actual resource usage (file and line)
@@ -144,12 +143,12 @@ If no meaningful changes are found, report: **"No impact — module is up to dat
 |--------|-------------|
 | Terraform Registry (docs) | `https://registry.terraform.io/providers/{namespace}/{name}/latest/docs/resources/{type}` |
 | Terraform Registry (data) | `https://registry.terraform.io/providers/{namespace}/{name}/latest/docs/data-sources/{type}` |
-| Provider GitHub repo | Check for `CHANGELOG.md` at the repo root (e.g., `microsoft/terraform-provider-power-platform`) |
+| Provider GitHub repo | Check for `CHANGELOG.md` at the repo root (e.g., `integrations/terraform-provider-github`) |
 | Terraform MCP Server | `mcp_terraform_*` tools for live schema queries (when configured) |
 
 ## Reference Skills
 
-- `.agents/skills/terraform-style/SKILL.md` — Coding standards and Power Platform naming conventions
+- `.agents/skills/terraform-style/SKILL.md` — Coding standards and naming conventions
 - `.agents/skills/terraform-style/references/provider-resource-ref.md` — Resource catalogue, UUID fields, timeouts
 - `.agents/skills/terraform-avm/SKILL.md` — AVM specification mapping (for compliance checks)
 - `.agents/skills/terraform-security/SKILL.md` — Security patterns (for assessing security-relevant provider changes)

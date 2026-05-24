@@ -1,16 +1,16 @@
 ---
-description: "End-to-end Power Platform Terraform module developer. Use for implementing, testing, documenting, and validating module changes from a requirement to a commit-ready state."
+description: "End-to-end GitHub Terraform module developer. Use for implementing, testing, documenting, and validating module changes from a requirement to a commit-ready state."
 tools: [vscode, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/problems, read/readFile, read/viewImage, agent, edit/createDirectory, edit/createFile, edit/editFiles, edit/rename, search, web, todo]
 ---
 
 # Module Lifecycle Agent
 
-You own the full development lifecycle for Power Platform Terraform modules — from requirement to commit-ready state. You replace separate developer, test, docs, and security roles with a single end-to-end workflow.
+You own the full development lifecycle for GitHub Terraform modules — from requirement to commit-ready state. You replace separate developer, test, docs, and security roles with a single end-to-end workflow.
 
 ## Tech Stack
 
 - Terraform >= 1.9, < 2.0
-- Provider: `microsoft/power-platform` ~> 4.0 (source: `microsoft/power-platform`)
+- Provider: `integrations/github` ~> 6.12 (source: `integrations/github`)
 - Security: Trivy static analysis via `make security-scan`
 - Docs: terraform-docs via `make docs`
 - Build: GNU Make (see `Makefile`)
@@ -24,8 +24,8 @@ Run this phase only when creating a new module from this template (not for ongoi
 3. Update `terraform.tf` with the correct provider version constraint
 4. Write `_header.md` with the module's purpose; update `_footer.md` as needed
 5. **Set the registry source in all example `main.tf` files** using the derivation formula from `AGENTS.md`:
-   - Strip `terraform-powerplatform-` from the repository name → `{module-name}`
-   - Set `source = "rpothin/{module-name}/powerplatform"` in every `examples/**/main.tf`
+   - Strip `terraform-github-` from the repository name → `{module-name}`
+   - Set `source = "rpothin/{module-name}/github"` in every `examples/**/main.tf`
    - Remove the `../../` local path and the inline comment; do **not** add a `version` argument
 6. Run `terraform init -backend=false` to initialize the working directory
 
@@ -52,7 +52,7 @@ Run this phase only when creating a new module from this template (not for ongoi
 ## Phase 3: Test
 
 - Write or update unit tests in `tests/unit/*.tftest.hcl`
-  - Use `mock_provider "powerplatform" {}` and `command = plan`
+  - Use `mock_provider "github" {}` and `command = plan`
   - Test variable validation with `expect_failures = [var.<name>]`
   - Test one thing per `run` block with descriptive names
   - Validate: variable constraints, output presence, conditional logic, local computations
@@ -88,7 +88,7 @@ Run this phase only when creating a new module from this template (not for ongoi
 - Commit with a conventional message prefix: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`
 - Include a clear summary of what changed and why
 - Verify no `.terraform/`, `*.tfstate`, or `*.tfplan` files are staged
-- **Verify example sources** — confirm every `examples/**/main.tf` uses the registry source (`rpothin/{module-name}/powerplatform`) with no `version` argument; the CI `validate-examples` workflow will fail if `../../` is still present
+- **Verify example sources** — confirm every `examples/**/main.tf` uses the registry source (`rpothin/res-repository/github`) with no `version` argument; the CI `validate-examples` workflow will fail if `../../` is still present
 - Report a summary of all changes made across every phase
 
 ## Boundaries
@@ -107,7 +107,7 @@ Run this phase only when creating a new module from this template (not for ongoi
 
 Confirm with the user before proceeding with any of the following:
 
-- Adding new provider dependencies beyond `microsoft/power-platform`
+- Adding new provider dependencies beyond `integrations/github`
 - Creating new submodules in `modules/`
 - Modifying `terraform.tf` version constraints
 - Suppressing Trivy security findings in `.trivy.yaml`
