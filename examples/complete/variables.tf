@@ -13,7 +13,7 @@ variable "description" {
 variable "visibility" {
   description = "The visibility of the repository."
   type        = string
-  default     = "public"
+  default     = "private"
 }
 
 variable "template" {

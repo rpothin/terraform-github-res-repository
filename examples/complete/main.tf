@@ -6,8 +6,7 @@ module "this" {
   visibility  = var.visibility
 
   # Create from a template repository
-  template  = var.template
-  auto_init = false # Must be false when template is provided
+  template = var.template
 
   # Repository features
   has_discussions = false

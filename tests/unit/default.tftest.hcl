@@ -69,8 +69,8 @@ run "default_visibility_is_private" {
   }
 
   assert {
-    condition     = var.visibility == "private"
-    error_message = "Visibility should default to private."
+    condition     = github_repository.this.visibility == "private"
+    error_message = "Repository visibility should default to private."
   }
 }
 
@@ -98,6 +98,20 @@ run "accepts_public_visibility" {
   assert {
     condition     = github_repository.this.visibility == "public"
     error_message = "Repository visibility should be set to public."
+  }
+}
+
+run "accepts_internal_visibility" {
+  command = plan
+
+  variables {
+    name       = "test-repo"
+    visibility = "internal"
+  }
+
+  assert {
+    condition     = github_repository.this.visibility == "internal"
+    error_message = "Repository visibility should be set to internal."
   }
 }
 
@@ -259,6 +273,41 @@ run "fork_requires_source_fields" {
   ]
 }
 
+run "fork_succeeds_with_source_fields" {
+  command = plan
+
+  variables {
+    name         = "test-repo"
+    fork         = true
+    source_owner = "some-org"
+    source_repo  = "some-repo"
+  }
+
+  assert {
+    condition     = output.name == "test-repo"
+    error_message = "Fork should be accepted when source_owner and source_repo are provided."
+  }
+}
+
+run "fork_and_template_are_mutually_exclusive" {
+  command = plan
+
+  variables {
+    name         = "test-repo"
+    fork         = true
+    source_owner = "some-org"
+    source_repo  = "some-repo"
+    template = {
+      owner      = "some-org"
+      repository = "some-template"
+    }
+  }
+
+  expect_failures = [
+    github_repository.this,
+  ]
+}
+
 run "template_rejects_auto_init_true" {
   command = plan
 
@@ -274,6 +323,54 @@ run "template_rejects_auto_init_true" {
 
   expect_failures = [
     github_repository.this,
+  ]
+}
+
+run "template_rejects_empty_owner" {
+  command = plan
+
+  variables {
+    name = "test-repo"
+    template = {
+      owner      = ""
+      repository = "some-template"
+    }
+  }
+
+  expect_failures = [
+    var.template,
+  ]
+}
+
+run "template_rejects_whitespace_owner" {
+  command = plan
+
+  variables {
+    name = "test-repo"
+    template = {
+      owner      = "   "
+      repository = "some-template"
+    }
+  }
+
+  expect_failures = [
+    var.template,
+  ]
+}
+
+run "template_rejects_empty_repository" {
+  command = plan
+
+  variables {
+    name = "test-repo"
+    template = {
+      owner      = "some-org"
+      repository = ""
+    }
+  }
+
+  expect_failures = [
+    var.template,
   ]
 }
 

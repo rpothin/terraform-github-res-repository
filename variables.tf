@@ -54,9 +54,9 @@ variable "allow_update_branch" {
 }
 
 variable "archive_on_destroy" {
-  description = "Archive the repository instead of deleting it when `terraform destroy` is run. Default: false. Set to true to prevent accidental permanent deletion. Note: archived repositories cannot currently be unarchived via the GitHub API."
+  description = "Archive the repository instead of deleting it when `terraform destroy` is run. Default: true (safe by default). Set to false to enable permanent deletion on destroy — use with caution. Note: archived repositories cannot currently be unarchived via the GitHub API."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
@@ -175,6 +175,7 @@ variable "merge_commit_title" {
 variable "security_and_analysis" {
   description = <<-DESCRIPTION
   Security and analysis settings for the repository. Requires GitHub Advanced Security (GHAS) license for private/internal repositories, or the repository must be public (security features are always enabled for public repos). Note: `advanced_security` must not be configured for public repositories (GitHub API rejects it). Each configured sub-block requires a `status` of `"enabled"` or `"disabled"`. Omit sub-blocks you do not wish to configure. Sub-blocks: `advanced_security`, `code_security`, `secret_scanning`, `secret_scanning_ai_detection`, `secret_scanning_non_provider_patterns`, `secret_scanning_push_protection`.
+  Note: GitHub Dependabot vulnerability alerts are managed by the separate `github_repository_vulnerability_alerts` resource, which is not included in this module; provision it independently if needed.
   DESCRIPTION
   type = object({
     advanced_security                     = optional(object({ status = string }), null)
@@ -249,6 +250,11 @@ variable "template" {
   })
   default  = null
   nullable = true
+
+  validation {
+    condition     = var.template == null ? true : (trimspace(var.template.owner) != "" && trimspace(var.template.repository) != "")
+    error_message = "template.owner and template.repository must not be empty strings when template is provided."
+  }
 }
 
 variable "topics" {

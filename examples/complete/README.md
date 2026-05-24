@@ -84,7 +84,7 @@ Description: The visibility of the repository.
 
 Type: `string`
 
-Default: `"public"`
+Default: `"private"`
 
 ## Outputs
 

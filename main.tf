@@ -1,7 +1,6 @@
 # trivy:ignore:GIT-0003 -- vulnerability_alerts is a deprecated provider attribute; use the dedicated github_repository_vulnerability_alerts resource instead
 resource "github_repository" "this" {
-  name       = var.name
-  visibility = var.visibility
+  name = var.name
 
   allow_auto_merge            = var.allow_auto_merge
   allow_forking               = var.allow_forking
@@ -30,6 +29,7 @@ resource "github_repository" "this" {
   squash_merge_commit_message = local.squash_merge_commit_message
   squash_merge_commit_title   = local.squash_merge_commit_title
   topics                      = var.topics
+  visibility                  = var.visibility
   web_commit_signoff_required = var.web_commit_signoff_required
 
   dynamic "security_and_analysis" {
@@ -117,6 +117,9 @@ resource "github_repository" "this" {
       error_message = "security_and_analysis.advanced_security must not be configured when visibility is 'public'; the GitHub API rejects this setting for public repositories."
     }
 
-    prevent_destroy = false
+    precondition {
+      condition     = !(var.fork && var.template != null)
+      error_message = "fork and template are mutually exclusive; a repository cannot be both a fork and created from a template."
+    }
   }
 }
