@@ -12,7 +12,7 @@ run "creates_repository_with_required_inputs" {
   command = apply
 
   variables {
-    name               = "tftest-basic-${formatdate("YYYYMMDDhhmmss", plantimestamp())}"
+    name               = "tftest-basic-${formatdate("YYYYMMDDhhmmss", timestamp())}"
     archive_on_destroy = false
   }
 
@@ -26,7 +26,7 @@ run "creates_repository_with_extended_config" {
   command = apply
 
   variables {
-    name                   = "tftest-full-${formatdate("YYYYMMDDhhmmss", plantimestamp())}"
+    name                   = "tftest-full-${formatdate("YYYYMMDDhhmmss", timestamp())}"
     description            = "Integration test repository"
     visibility             = "private"
     has_issues             = true

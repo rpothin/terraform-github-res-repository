@@ -89,6 +89,7 @@ jobs:
           scan-ref: .
           severity: HIGH,CRITICAL
           exit-code: "1"
+          trivy-config: ".trivy.yaml"
           version: "v0.69.3"
 
   unit:
