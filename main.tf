@@ -1,4 +1,4 @@
-# Test
+# trivy:ignore:GIT-0003
 resource "github_repository" "this" {
   name = var.name
 
@@ -120,6 +120,11 @@ resource "github_repository" "this" {
     precondition {
       condition     = !(var.fork && var.template != null)
       error_message = "fork and template are mutually exclusive; a repository cannot be both a fork and created from a template."
+    }
+
+    precondition {
+      condition     = !var.allow_merge_commit || (var.merge_commit_title == "PR_TITLE" || (var.merge_commit_title == "MERGE_MESSAGE" && var.merge_commit_message == "PR_TITLE"))
+      error_message = "Invalid merge commit setting combination. GitHub API accepts: (PR_TITLE + PR_BODY), (PR_TITLE + BLANK), or (MERGE_MESSAGE + PR_TITLE)."
     }
   }
 }

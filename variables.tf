@@ -161,9 +161,9 @@ variable "lifecycle_state" {
 }
 
 variable "merge_commit_message" {
-  description = "Default message for merge commits. Valid values: `PR_BODY`, `PR_TITLE`, `BLANK`. Default: `PR_BODY`. Applicable only when `allow_merge_commit = true`."
+  description = "Default message for merge commits. Valid values: `PR_BODY`, `PR_TITLE`, `BLANK`. Default: `PR_TITLE`. Note: GitHub API enforces valid combinations — `MERGE_MESSAGE` title only accepts `PR_TITLE` message; `PR_TITLE` title accepts `PR_BODY` or `BLANK` message. Applicable only when `allow_merge_commit = true`."
   type        = string
-  default     = "PR_BODY"
+  default     = "PR_TITLE"
   nullable    = false
 
   validation {

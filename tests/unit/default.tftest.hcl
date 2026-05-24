@@ -489,3 +489,18 @@ run "rejects_invalid_lifecycle_state" {
     var.lifecycle_state,
   ]
 }
+
+run "rejects_invalid_merge_commit_combo" {
+  command = plan
+
+  variables {
+    name                 = "test-repo"
+    allow_merge_commit   = true
+    merge_commit_title   = "MERGE_MESSAGE"
+    merge_commit_message = "PR_BODY"
+  }
+
+  expect_failures = [
+    github_repository.this,
+  ]
+}
