@@ -1,4 +1,4 @@
-# trivy:ignore:GIT-0003 -- vulnerability_alerts is a deprecated provider attribute; use the dedicated github_repository_vulnerability_alerts resource instead
+# Test
 resource "github_repository" "this" {
   name = var.name
 
