@@ -434,3 +434,58 @@ run "output_name_matches_input" {
     error_message = "Output name should match the input value."
   }
 }
+
+run "archive_on_destroy_defaults_to_false" {
+  command = plan
+
+  variables {
+    name = "test-repo"
+  }
+
+  assert {
+    condition     = tobool(github_repository.this.archive_on_destroy) == false
+    error_message = "archive_on_destroy should default to false."
+  }
+}
+
+run "inactive_lifecycle_state_archives_repository" {
+  command = plan
+
+  variables {
+    name            = "test-repo"
+    lifecycle_state = "inactive"
+  }
+
+  assert {
+    condition     = tobool(github_repository.this.archived) == true
+    error_message = "Repository should be archived when lifecycle_state is inactive."
+  }
+}
+
+run "lifecycle_state_inactive_overrides_archived_false" {
+  command = plan
+
+  variables {
+    name            = "test-repo"
+    lifecycle_state = "inactive"
+    archived        = false
+  }
+
+  assert {
+    condition     = tobool(github_repository.this.archived) == true
+    error_message = "lifecycle_state = inactive should override archived = false."
+  }
+}
+
+run "rejects_invalid_lifecycle_state" {
+  command = plan
+
+  variables {
+    name            = "test-repo"
+    lifecycle_state = "unknown"
+  }
+
+  expect_failures = [
+    var.lifecycle_state,
+  ]
+}

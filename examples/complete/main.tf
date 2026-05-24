@@ -29,5 +29,12 @@ module "this" {
 
   # Governance
   web_commit_signoff_required = true
-  archive_on_destroy          = true
+
+  # Lifecycle management
+  # To decommission this repository gracefully (archive instead of delete):
+  #   1. Set lifecycle_state = "inactive" in your tfvars
+  #   2. Run terraform plan && terraform apply  (archives the repository)
+  #   3. Optionally run terraform destroy to clean up Terraform state
+  #
+  # lifecycle_state = "inactive"
 }

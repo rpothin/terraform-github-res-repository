@@ -15,7 +15,7 @@ An [AVM-aligned](https://azure.github.io/Azure-Verified-Modules/) Terraform reso
 - Fork-based repository creation
 - Configurable merge strategies (merge commit, squash, rebase)
 - GitHub Advanced Security configuration (requires GHAS license or public repo)
-- Lifecycle protection: `archive_on_destroy` to prevent accidental permanent deletion
+- Lifecycle management via `lifecycle_state` for graceful, audit-trail-preserving decommissioning
 
 ## Authentication
 
@@ -41,6 +41,50 @@ The token requires `repo` scope (or `public_repo` for public repositories only).
 - `gitignore_template` and `license_template` are applied **at creation time only** and have no effect on existing repositories.
 - Repositories with a leading period (e.g., `.github`) are not supported by this module's name validation; create them directly with the provider.
 - `vulnerability_alerts`, `pages`, and `has_downloads` are deprecated provider attributes excluded from this module. Use the dedicated `github_repository_vulnerability_alerts` and `github_repository_pages` resources instead.
+
+## Lifecycle Management
+
+This module provides a `lifecycle_state` variable for managing repository decommissioning through Terraform's normal plan/apply workflow rather than `terraform destroy`.
+
+### Recommended decommissioning pattern
+
+Instead of running `terraform destroy` (which deletes the repository), set `lifecycle_state = "inactive"` and apply:
+
+```hcl
+module "repo" {
+  source = "rpothin/res-repository/github"
+
+  name             = "my-repository"
+  lifecycle_state  = "inactive"   # archives the repository
+}
+```
+
+```bash
+terraform plan   # review: archived = true
+terraform apply  # archives the repository
+```
+
+This preserves the repository as a read-only archive with a complete history and audit trail. Optionally run `terraform destroy` afterwards to remove it from Terraform state (the archived repository remains on GitHub).
+
+### Why this pattern matters
+
+| Approach | Repository after | Audit trail | Recoverable |
+|---|---|---|---|
+| `terraform destroy` | **Deleted** | No | No |
+| `lifecycle_state = "inactive"` + apply | **Archived** (read-only) | Yes | Manual only* |
+| `archive_on_destroy = true` + destroy | **Archived** | Yes | Manual only* |
+
+*The GitHub API does not support unarchiving repositories programmatically.
+
+### `lifecycle_state` vs `archived`
+
+- `archived = true` sets the archived flag directly (equivalent to `lifecycle_state = "inactive"`)
+- `lifecycle_state = "inactive"` overrides `archived = false`, guaranteeing the repository is archived regardless of the `archived` variable value
+- `lifecycle_state = "active"` (default) defers to `var.archived`
+
+### `archive_on_destroy`
+
+Set `archive_on_destroy = true` if you want `terraform destroy` to archive the repository instead of deleting it (useful as a last-resort safety net). The default is `false` — standard Terraform behavior, destroy deletes.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -122,15 +166,15 @@ Default: `true`
 
 ### <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy)
 
-Description: Archive the repository instead of deleting it when `terraform destroy` is run. Default: true (safe by default). Set to false to enable permanent deletion on destroy — use with caution. Note: archived repositories cannot currently be unarchived via the GitHub API.
+Description: Archive the repository instead of deleting it when `terraform destroy` is run. Default: false (standard Terraform behavior — destroy deletes the repository). Set to true if you want `terraform destroy` to leave the repository archived rather than deleted. For a safer decommissioning workflow that preserves audit trail, prefer setting `lifecycle_state = "inactive"` and running `terraform apply` to archive the repository first, then optionally running `terraform destroy` to clean up Terraform state.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ### <a name="input_archived"></a> [archived](#input\_archived)
 
-Description: Specifies if the repository should be archived (read-only). Default: false. Note: the GitHub API does not currently support unarchiving.
+Description: Specifies if the repository should be archived (read-only). Default: false. Note: the GitHub API does not currently support unarchiving. When `lifecycle_state = "inactive"`, this is overridden to `true` regardless of this setting.
 
 Type: `bool`
 
@@ -231,6 +275,14 @@ Description: Use a license template when initializing the repository. Specify th
 Type: `string`
 
 Default: `null`
+
+### <a name="input_lifecycle_state"></a> [lifecycle\_state](#input\_lifecycle\_state)
+
+Description: The desired lifecycle state of the repository. `"active"` (default) — the repository operates normally; `var.archived` controls the archived flag directly. `"inactive"` — the repository is archived (read-only), overriding `var.archived`; intended for graceful decommissioning via `terraform apply` rather than `terraform destroy`. Note: archiving via the GitHub API is effectively one-way — the provider cannot unarchive a repository, so transitioning back from `"inactive"` to `"active"` will not recover the repository.
+
+Type: `string`
+
+Default: `"active"`
 
 ### <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message)
 
