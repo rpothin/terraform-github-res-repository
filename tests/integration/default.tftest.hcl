@@ -2,7 +2,7 @@
 #
 # Prerequisites:
 #   GITHUB_TOKEN — Personal Access Token or GitHub App installation token with `repo` scope
-#   GITHUB_OWNER — (optional) GitHub organization or user to scope repository creation to
+#   GH_OWNER — (optional) GitHub organization or user to scope repository creation to
 #
 # These tests create real GitHub repositories.
 # Repositories are automatically destroyed after test completion.

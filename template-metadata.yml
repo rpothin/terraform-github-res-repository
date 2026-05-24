@@ -42,7 +42,7 @@ topics:
 variables:
     - name: ENABLE_INTEGRATION_TESTS
       value: "false"
-    - name: GITHUB_OWNER
+    - name: GH_OWNER
 secrets:
     - name: GH_TOKEN
 actions:

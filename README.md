@@ -24,7 +24,7 @@ The module requires a GitHub token to authenticate with the GitHub API. Configur
 ```hcl
 provider "github" {
   # Set via environment variable: GITHUB_TOKEN
-  # For organizations: set GITHUB_OWNER or configure owner directly
+  # For organizations: set GH_OWNER or configure owner directly
 }
 ```
 
