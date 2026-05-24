@@ -1,5 +1,4 @@
 # trivy:ignore:GIT-0003
-# Test
 resource "github_repository" "this" {
   name = var.name
 
