@@ -1,5 +1,5 @@
 # trivy:ignore:GIT-0003
-resource "github_repository" "this" {
+resource "github_repository" "this" { # Test
   name = var.name
 
   allow_auto_merge            = var.allow_auto_merge
