@@ -1,0 +1,5 @@
+misconfigurations:
+  - id: GIT-0003
+    statement: "vulnerability_alerts is a deprecated provider attribute in integrations/github ~> 6.x; use the dedicated github_repository_vulnerability_alerts resource instead"
+    paths:
+      - main.tf
