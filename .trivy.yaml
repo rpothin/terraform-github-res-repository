@@ -4,6 +4,8 @@ scan:
   scanners:
     - misconfig
 
+ignorefile: .trivyignore.yaml
+
 misconfiguration:
   # Ignore specific rules that produce false positives for template placeholder content
   # Add rule IDs here as needed when template placeholders trigger false positives

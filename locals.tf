@@ -1,8 +1,6 @@
-# Local values for computed expressions.
-# Add local values here to keep resource definitions clean.
-#
-# Example:
-#
-# locals {
-#   resource_name = "${var.name}-${var.location}"
-# }
+locals {
+  merge_commit_message        = var.allow_merge_commit ? var.merge_commit_message : null
+  merge_commit_title          = var.allow_merge_commit ? var.merge_commit_title : null
+  squash_merge_commit_message = var.allow_squash_merge ? var.squash_merge_commit_message : null
+  squash_merge_commit_title   = var.allow_squash_merge ? var.squash_merge_commit_title : null
+}

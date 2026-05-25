@@ -2,16 +2,15 @@ terraform {
   required_version = ">= 1.9, < 2.0"
 
   required_providers {
-    powerplatform = {
-      source  = "microsoft/power-platform"
-      version = "~> 4.0"
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.12"
     }
   }
 }
 
-provider "powerplatform" {
-  # Configuration is provided via environment variables:
-  #   POWER_PLATFORM_TENANT_ID
-  #   POWER_PLATFORM_CLIENT_ID
-  # For OIDC: ARM_USE_OIDC=true
+provider "github" {
+  # Authentication via environment variable:
+  #   GITHUB_TOKEN — Personal Access Token or GitHub App installation token
+  # For organizations: optionally set GITHUB_OWNER to scope to the org
 }

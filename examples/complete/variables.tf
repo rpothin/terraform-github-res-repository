@@ -1,21 +1,33 @@
 variable "name" {
-  description = "The name of the resource."
+  description = "The name of the GitHub repository."
   type        = string
   default     = "example-complete"
 }
 
-variable "location" {
-  description = "The geographic location for the resource."
+variable "description" {
+  description = "A short description of the repository."
   type        = string
-  default     = "unitedstates"
+  default     = "A complete example repository managed by Terraform."
 }
 
-variable "tags" {
-  description = "A map of tags to apply to the resource."
-  type        = map(string)
-  default = {
-    environment = "development"
-    project     = "power-platform-module"
-    managed_by  = "terraform"
-  }
+variable "visibility" {
+  description = "The visibility of the repository."
+  type        = string
+  default     = "private"
+}
+
+variable "template" {
+  description = "Template repository configuration for creating the repository from a template."
+  type = object({
+    owner                = string
+    repository           = string
+    include_all_branches = optional(bool, false)
+  })
+  default = null
+}
+
+variable "topics" {
+  description = "A list of topics to associate with the repository."
+  type        = list(string)
+  default     = ["terraform", "github", "infrastructure"]
 }

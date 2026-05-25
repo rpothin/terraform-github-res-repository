@@ -1,41 +1,47 @@
-# Integration tests — uses real provider, requires OIDC credentials.
+# Integration tests — uses real provider, requires credentials.
 #
 # Prerequisites:
-#   ARM_USE_OIDC=true                              (signals OIDC mode; reused from AzureRM convention by the Power Platform provider)
-#   POWER_PLATFORM_TENANT_ID=<your-tenant-id>
-#   POWER_PLATFORM_CLIENT_ID=<your-client-id>
+#   GITHUB_TOKEN  — Personal Access Token or GitHub App installation token.
+#                   Requires `repo` scope for repository management.
+#                   Requires `delete_repo` scope because these tests set archive_on_destroy = false
+#                   so that teardown actually deletes repositories (clean slate for re-runs).
+#                   In CI, sourced from repository secret GH_TOKEN.
+#   GITHUB_OWNER  — (optional) GitHub organization or user to scope repository creation under.
+#                   In CI, sourced from repository variable GH_OWNER.
 #
-# These tests create real resources against a Power Platform tenant.
-# Resources are automatically destroyed after test completion.
+# These tests create real GitHub repositories prefixed with "tftest-".
+# archive_on_destroy is explicitly set to false so repositories are DELETED on teardown.
+# Note: if a test run fails mid-execution, orphaned repositories may need manual cleanup via the GitHub UI or CLI.
 
-run "creates_resource_with_required_variables" {
+run "creates_repository_with_required_inputs" {
   command = apply
 
   variables {
-    name     = "tftest-integration"
-    location = "unitedstates"
+    name               = "tftest-basic-${formatdate("YYYYMMDDhhmmss", timestamp())}"
+    archive_on_destroy = false
   }
 
   assert {
-    condition     = output.name == "tftest-integration"
-    error_message = "Resource name should match the input variable."
+    condition     = startswith(output.name, "tftest-basic-") && output.html_url != ""
+    error_message = "The repository should be created and expose a non-empty HTML URL."
   }
 }
 
-run "creates_resource_with_all_variables" {
+run "creates_repository_with_extended_config" {
   command = apply
 
   variables {
-    name     = "tftest-integration-complete"
-    location = "unitedstates"
-    tags = {
-      environment = "integration-test"
-      managed_by  = "terraform-test"
-    }
+    name                   = "tftest-full-${formatdate("YYYYMMDDhhmmss", timestamp())}"
+    description            = "Integration test repository"
+    visibility             = "private"
+    has_issues             = true
+    topics                 = ["terraform", "testing"]
+    delete_branch_on_merge = true
+    archive_on_destroy     = false
   }
 
   assert {
-    condition     = output.name == "tftest-integration-complete"
-    error_message = "Resource name should match the input variable."
+    condition     = startswith(output.name, "tftest-full-") && output.full_name != ""
+    error_message = "The repository should be created with the extended configuration."
   }
 }

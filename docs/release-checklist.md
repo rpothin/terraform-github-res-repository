@@ -7,13 +7,13 @@ Step-by-step instructions for publishing a new release of the module.
 ### Terraform Registry Requirements
 
 - [ ] GitHub repository is **public** (required for the public Terraform Registry)
-- [ ] Repository name follows the `terraform-<PROVIDER>-<NAME>` format (e.g. `terraform-powerplatform-<module-name>`)
+- [ ] Repository name follows the `terraform-<PROVIDER>-<NAME>` format (e.g. `terraform-github-<module-name>`)
 - [ ] GitHub repository **description** is set — it becomes the module's short description on the registry
 - [ ] Repository adheres to the [standard module structure](https://developer.hashicorp.com/terraform/language/modules/develop/structure)
 
 ### Code Quality
 
-- [ ] Example `source` values updated from `../../` to the Terraform Registry address (e.g. `rpothin/<module-name>/powerplatform`) with **no `version` argument** — see [AGENTS.md](../AGENTS.md) for the derivation formula
+- [ ] Example `source` values updated from `../../` to the Terraform Registry address (`rpothin/res-repository/github`) with **no `version` argument** — see [AGENTS.md](../AGENTS.md) for the derivation formula
 - [ ] Footer links in `_footer.md` files (root, `examples/`, `examples/basic/`, `examples/complete/`) converted from relative paths to absolute GitHub URLs (relative links 404 on the Terraform Registry)
 - [ ] All CI checks pass on the `main` branch
 - [ ] `terraform fmt -check -recursive` passes

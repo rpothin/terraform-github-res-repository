@@ -30,8 +30,8 @@ jobs:
             echo ""
             echo "ERROR: One or more examples still use a local source path ('../../')."
             echo "Replace with the Terraform Registry source derived from the repo name:"
-            echo "  strip 'terraform-powerplatform-' from the repo name → {module-name}"
-            echo "  source = \"rpothin/{module-name}/powerplatform\""
+            echo "  strip 'terraform-github-' from the repo name → {module-name}"
+            echo "  source = \"rpothin/{module-name}/github\""
             echo "See AGENTS.md for the full convention."
             exit 1
           fi

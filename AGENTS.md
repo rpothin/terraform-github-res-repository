@@ -1,11 +1,11 @@
-# Power Platform Terraform Module Agent Guide
+# GitHub Terraform Module Agent Guide
 
-This repository is a **Terraform module** for Power Platform, following AVM-aligned conventions. This is a template repository — `main.tf` contains placeholder comments, not real resources.
+This repository is a **Terraform resource module** for managing GitHub repositories, following AVM-aligned conventions. It targets the `integrations/github` provider and is published at `rpothin/res-repository/github` on the Terraform Registry.
 
 ## Tech Stack
 
 - **Terraform**: >= 1.9, < 2.0
-- **Provider**: `microsoft/power-platform` ~> 4.0
+- **Provider**: `integrations/github` ~> 6.12
 - **Security scanner**: Trivy (configured via `.trivy.yaml`)
 - **Documentation**: terraform-docs (configured via `.terraform-docs.yml`)
 - **Build tool**: GNU Make (see `Makefile`)
@@ -67,11 +67,11 @@ make check-all
 - Use pessimistic version constraints (`~>`) for providers
 - Run `make check-all` before finalizing changes
 - Use OIDC authentication patterns (no client secrets)
-- Use `mock_provider "powerplatform"` for unit tests
+- Use `mock_provider "github"` for unit tests
 - Pin GitHub Actions to full commit SHA with version comment
 
 ### Ask First
-- Adding new provider dependencies beyond `microsoft/power-platform`
+- Adding new provider dependencies beyond `integrations/github`
 - Creating new submodules in `modules/`
 - Modifying `terraform.tf` version constraints
 - Suppressing Trivy security findings in `.trivy.yaml`
@@ -96,15 +96,13 @@ This is the single canonical definition for how example `main.tf` files referenc
 The registry source is always derivable from the repository name:
 
 ```
-terraform-powerplatform-{module-name}  →  rpothin/{module-name}/powerplatform
+terraform-github-{module-name}  →  rpothin/{module-name}/github
 ```
 
 Examples:
 | Repository | Registry source |
 |---|---|
-| `terraform-powerplatform-res-environment` | `rpothin/res-environment/powerplatform` |
-| `terraform-powerplatform-res-dlppolicy` | `rpothin/res-dlppolicy/powerplatform` |
-| `terraform-powerplatform-utl-dlppolicy-replicator` | `rpothin/utl-dlppolicy-replicator/powerplatform` |
+| `terraform-github-res-repository` | `rpothin/res-repository/github` |
 
 ### Rules
 
@@ -116,7 +114,7 @@ Examples:
 
 ```hcl
 module "this" {
-  source = "rpothin/res-environment/powerplatform"
+  source = "rpothin/res-repository/github"
 
   # ... module inputs
 }

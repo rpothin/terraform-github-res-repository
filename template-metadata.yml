@@ -25,28 +25,26 @@ settings:
     has_discussions: true
     has_pull_requests: true
     pull_request_creation_policy: collaborators_only
-    allow_squash_merge: false
-    allow_merge_commit: true
+    allow_squash_merge: true
+    allow_merge_commit: false
     allow_rebase_merge: false
     allow_auto_merge: false
     delete_branch_on_merge: true
     allow_update_branch: true
     visibility: public
-    description: AVM-aligned Terraform Resource / Pattern / Utility Module for ...
+    description: AVM-aligned Terraform Resource Module for GitHub repositories
 topics:
     - avm-aligned
+    - github
     - module
-    - power-platform
     - terraform
     - resource
-    - pattern
-    - utility
 variables:
     - name: ENABLE_INTEGRATION_TESTS
       value: "false"
+    - name: GH_OWNER
 secrets:
-    - name: POWER_PLATFORM_CLIENT_ID
-    - name: POWER_PLATFORM_TENANT_ID
+    - name: GH_TOKEN
 actions:
     can_approve_pull_request_reviews: false
     sha_pinning_required: false
