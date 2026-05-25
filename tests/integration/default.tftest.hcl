@@ -1,23 +1,21 @@
 # Integration tests — uses real provider, requires credentials.
 #
 # Prerequisites:
-#   GITHUB_TOKEN — Personal Access Token or GitHub App installation token with `repo` scope
-#   GH_OWNER — (optional) GitHub organization or user to scope repository creation to
+#   GITHUB_TOKEN  — Personal Access Token or GitHub App installation token with `repo` and `delete_repo` scopes.
+#                   `delete_repo` scope is required for cleanup (terraform destroy deletes the repository).
+#                   In CI, sourced from repository secret GH_TOKEN.
+#   GITHUB_OWNER  — (optional) GitHub organization or user to scope repository creation under.
+#                   In CI, sourced from repository variable GH_OWNER.
 #
-# Note: delete_repo scope is NOT required — repositories are archived on cleanup (archive_on_destroy = true).
-# Cleanup issues PATCH /repos/{owner}/{repo} with {archived: true} instead of DELETE, which only requires repo scope.
-#
-# These tests create real GitHub repositories.
-# Repositories are archived (not deleted) automatically after test completion.
-# Note: archived tftest-* repos may need periodic manual cleanup.
-# Note: if a test run fails mid-execution, orphaned repositories may need manual cleanup.
+# These tests create real GitHub repositories prefixed with "tftest-".
+# Repositories are DELETED automatically after each test run completes (archive_on_destroy = false, the default).
+# Note: if a test run fails mid-execution, orphaned repositories may need manual cleanup via the GitHub UI or CLI.
 
 run "creates_repository_with_required_inputs" {
   command = apply
 
   variables {
-    name               = "tftest-basic-${formatdate("YYYYMMDDhhmmss", timestamp())}"
-    archive_on_destroy = true
+    name = "tftest-basic-${formatdate("YYYYMMDDhhmmss", timestamp())}"
   }
 
   assert {
@@ -36,7 +34,6 @@ run "creates_repository_with_extended_config" {
     has_issues             = true
     topics                 = ["terraform", "testing"]
     delete_branch_on_merge = true
-    archive_on_destroy     = true
   }
 
   assert {

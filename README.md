@@ -29,7 +29,7 @@ provider "github" {
 ```
 
 Supported authentication methods:
-- **Personal Access Token (PAT)**: set `GITHUB_TOKEN` with `repo` scope (or `public_repo` for public repositories only)
+- **Personal Access Token (PAT)**: set `GITHUB_TOKEN` with `repo` scope (or `public_repo` for public repositories only). Add `delete_repo` scope if you intend to delete repositories via `terraform destroy` (required for CI integration test teardown; not needed when using `lifecycle_state = "inactive"` or `archive_on_destroy = true`).
 - **GitHub App**: configure `app_auth` block in the provider; the app must have `Repository: Administration (write)` permission
 - **GitHub Actions**: the built-in `GITHUB_TOKEN` is **not sufficient** for repository creation/management — use a PAT or GitHub App installation token stored as a separate Actions secret (see CI configuration for reference)
 
@@ -83,6 +83,8 @@ This preserves the repository as a read-only archive with a complete history and
 ### `archive_on_destroy`
 
 Set `archive_on_destroy = true` if you want `terraform destroy` to archive the repository instead of deleting it (useful as a last-resort safety net). The default is `false` — standard Terraform behavior, destroy deletes.
+
+> **PAT scope note:** `terraform destroy` with the default `archive_on_destroy = false` issues `DELETE /repos/{owner}/{repo}`, which requires the `delete_repo` scope on classic PATs. If your token only has `repo` scope, set `archive_on_destroy = true` or use `lifecycle_state = "inactive"` + apply instead.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
