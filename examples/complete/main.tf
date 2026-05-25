@@ -31,10 +31,13 @@ module "this" {
   web_commit_signoff_required = true
 
   # Lifecycle management
-  # To decommission this repository gracefully (archive instead of delete):
-  #   1. Set lifecycle_state = "inactive" in your tfvars
-  #   2. Run terraform plan && terraform apply  (archives the repository)
-  #   3. Optionally run terraform destroy to clean up Terraform state
+  # By default, terraform destroy archives the repository instead of deleting it (archive_on_destroy = true).
+  # For ephemeral or test repositories that must be fully removed by destroy, set:
+  #   archive_on_destroy = false
   #
-  # lifecycle_state = "inactive"
+  # To gracefully decommission (archive first, then optionally clean state):
+  #   1. Set archived = true in your tfvars
+  #   2. Run terraform plan && terraform apply  (archives the repository)
+  #   3. Optionally run terraform destroy to remove from Terraform state
+  #      (the archived repository remains on GitHub — name stays occupied until manually deleted)
 }

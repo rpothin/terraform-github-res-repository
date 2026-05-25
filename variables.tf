@@ -54,14 +54,14 @@ variable "allow_update_branch" {
 }
 
 variable "archive_on_destroy" {
-  description = "Archive the repository instead of deleting it when `terraform destroy` is run. Default: false (standard Terraform behavior — destroy deletes the repository). Set to true if you want `terraform destroy` to leave the repository archived rather than deleted. For a safer decommissioning workflow that preserves audit trail, prefer setting `lifecycle_state = \"inactive\"` and running `terraform apply` to archive the repository first, then optionally running `terraform destroy` to clean up Terraform state."
+  description = "Archive the repository instead of deleting it when `terraform destroy` is run. Default: `true` (safe default — destroy archives rather than permanently deletes). Set to `false` for ephemeral repositories, test repositories, or any workflow where `terraform destroy` must fully free the repository name. Note: when `true`, destroying leaves an archived repository on GitHub; the name remains occupied until the repository is manually deleted or unarchived outside Terraform."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
 variable "archived" {
-  description = "Specifies if the repository should be archived (read-only). Default: false. Note: the GitHub API does not currently support unarchiving. When `lifecycle_state = \"inactive\"`, this is overridden to `true` regardless of this setting."
+  description = "Specifies if the repository should be archived (read-only). Default: `false`. Note: the GitHub API does not currently support unarchiving — archiving is effectively one-way via Terraform. For graceful decommissioning, set `archived = true` and run `terraform apply` to archive the repository; optionally run `terraform destroy` afterwards to remove it from Terraform state (the archived repository remains on GitHub)."
   type        = bool
   default     = false
   nullable    = false
@@ -148,17 +148,7 @@ variable "license_template" {
   default     = null
 }
 
-variable "lifecycle_state" {
-  description = "The desired lifecycle state of the repository. `\"active\"` (default) — the repository operates normally; `var.archived` controls the archived flag directly. `\"inactive\"` — the repository is archived (read-only), overriding `var.archived`; intended for graceful decommissioning via `terraform apply` rather than `terraform destroy`. Note: archiving via the GitHub API is effectively one-way — the provider cannot unarchive a repository, so transitioning back from `\"inactive\"` to `\"active\"` will not recover the repository."
-  type        = string
-  default     = "active"
-  nullable    = false
 
-  validation {
-    condition     = contains(["active", "inactive"], var.lifecycle_state)
-    error_message = "lifecycle_state must be either \"active\" or \"inactive\"."
-  }
-}
 
 variable "merge_commit_message" {
   description = "Default message for merge commits. Valid values: `PR_BODY`, `PR_TITLE`, `BLANK`. Default: `PR_TITLE`. Note: GitHub API enforces valid combinations — `MERGE_MESSAGE` title only accepts `PR_TITLE` message; `PR_TITLE` title accepts `PR_BODY` or `BLANK` message. Applicable only when `allow_merge_commit = true`."

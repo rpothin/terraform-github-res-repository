@@ -435,7 +435,7 @@ run "output_name_matches_input" {
   }
 }
 
-run "archive_on_destroy_defaults_to_false" {
+run "archive_on_destroy_defaults_to_true" {
   command = plan
 
   variables {
@@ -443,51 +443,23 @@ run "archive_on_destroy_defaults_to_false" {
   }
 
   assert {
-    condition     = tobool(github_repository.this.archive_on_destroy) == false
-    error_message = "archive_on_destroy should default to false."
+    condition     = tobool(github_repository.this.archive_on_destroy) == true
+    error_message = "archive_on_destroy should default to true."
   }
 }
 
-run "inactive_lifecycle_state_archives_repository" {
+run "archived_true_archives_repository" {
   command = plan
 
   variables {
-    name            = "test-repo"
-    lifecycle_state = "inactive"
+    name     = "test-repo"
+    archived = true
   }
 
   assert {
     condition     = tobool(github_repository.this.archived) == true
-    error_message = "Repository should be archived when lifecycle_state is inactive."
+    error_message = "Repository should be archived when archived = true."
   }
-}
-
-run "lifecycle_state_inactive_overrides_archived_false" {
-  command = plan
-
-  variables {
-    name            = "test-repo"
-    lifecycle_state = "inactive"
-    archived        = false
-  }
-
-  assert {
-    condition     = tobool(github_repository.this.archived) == true
-    error_message = "lifecycle_state = inactive should override archived = false."
-  }
-}
-
-run "rejects_invalid_lifecycle_state" {
-  command = plan
-
-  variables {
-    name            = "test-repo"
-    lifecycle_state = "unknown"
-  }
-
-  expect_failures = [
-    var.lifecycle_state,
-  ]
 }
 
 run "rejects_invalid_merge_commit_combo" {

@@ -9,7 +9,7 @@ resource "github_repository" "this" {
   allow_squash_merge          = var.allow_squash_merge
   allow_update_branch         = var.allow_update_branch
   archive_on_destroy          = var.archive_on_destroy
-  archived                    = local.archived
+  archived                    = var.archived
   auto_init                   = var.template == null ? coalesce(var.auto_init, true) : false
   delete_branch_on_merge      = var.delete_branch_on_merge
   description                 = var.description
