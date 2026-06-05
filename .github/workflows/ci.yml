@@ -110,8 +110,8 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    # PRs without repository secrets (for example Dependabot) must skip integration tests.
-    if: ${{ vars.ENABLE_INTEGRATION_TESTS == 'true' && secrets.GH_TOKEN != '' && vars.GH_OWNER != '' }}
+    # Job-level "if" does not support the secrets context; skip known no-secret PR contexts instead.
+    if: ${{ vars.ENABLE_INTEGRATION_TESTS == 'true' && vars.GH_OWNER != '' && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.fork == false && github.actor != 'dependabot[bot]')) }}
     permissions:
       contents: read
     steps:
